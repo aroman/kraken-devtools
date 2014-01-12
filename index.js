@@ -28,12 +28,10 @@ var fs = require('fs'),
 
 
 exports.dust = function (srcRoot, destRoot, options) {
-    console.log("I AM DUST MAN")
     var lib, compiler;
 
     lib = requireAny('dustjs-linkedin', 'adaro');
     compiler = function dust(name, data, args, callback) {
-        console.log("DUST MAN SAYS" + name);
         try {
             callback(null, lib.compile(data.toString('utf8'), name));
         } catch (err) {
@@ -131,6 +129,11 @@ exports.compiler = function (srcRoot, destRoot, options) {
     var middleware = noop;
 
     Object.keys(options || {}).forEach(function (name) {
+        // Skip if explicitly set to false
+        if (options[name] === false) {
+            return;
+        }
+
         var impl = exports[name](srcRoot, destRoot, options[name]);
 
         middleware = (function (prev) {
